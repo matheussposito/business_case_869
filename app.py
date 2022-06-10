@@ -14,15 +14,19 @@ from PIL import Image
 import pip
 
 
-def install(package):
-    if hasattr(pip, 'main'):
+def install_and_import(package):
+    import importlib
+    try:
+        importlib.import_module(package)
+    except ImportError:
+        import pip
         pip.main(['install', package])
-    else:
-        pip._internal.main(['install', package])
+    finally:
+        globals()[package] = importlib.import_module(package)
 
 
-install('pystan==2.19.1.1')
-install('fbprophet')
+install_and_import('pystan==2.19.1.1')
+install_and_import('fbprophet')
 
 from fbprophet import Prophet
 #Constants
@@ -179,13 +183,13 @@ if len(st.session_state) != 0:
             st.write("-------")
             st.markdown("<h1 style='text-align: center; color: red;font-family: arial; font-size: 200%;\
                         vertical-align: middle ; line-height: 21px\
-                    '><strong>Data Visualization</strong></h1>"                                                                                                                              , unsafe_allow_html=True)
+                    '><strong>Data Visualization</strong></h1>"                                                                                                                                                                                                                                                            , unsafe_allow_html=True)
             st.write("-------")
 
         #Plot the map
         st.markdown("<h1 style='text-align: left; color: black;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>I) Where do you sell the most ? 🌍</strong></h1>"                                                                                                                                            , unsafe_allow_html=True)
+            '><strong>I) Where do you sell the most ? 🌍</strong></h1>"                                                                                                                                                                                                                                                                                        , unsafe_allow_html=True)
         px.set_mapbox_access_token('pk.eyJ1IjoibXJkYXJhdWpvIiwiYSI6ImNsM3hsY2c2NzAzcHEzYm1oYmliZHc5aXoifQ.1E3p2I8p8bEkHSPJDzUXWQ')
         df = px.data.election_geojson()
         fig = px.scatter_mapbox(data_frame=st.session_state.sales_city_year, lat="Lat", lon="Lon", color="city", size="sales",
@@ -197,30 +201,30 @@ if len(st.session_state) != 0:
         #Plot the top 5
         st.markdown("<h1 style='text-align: left; color: black;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>II) Your Top 5 ? 🖐 </strong></h1>"                                                                                                                , unsafe_allow_html=True)
+            '><strong>II) Your Top 5 ? 🖐 </strong></h1>"                                                                                                                                                                                                                                , unsafe_allow_html=True)
         col1, col2, col3 = st.columns((1,1,1))
         with col1:
             st.markdown("<h1 style='text-align: center; color: blue;font-family: arial; font-size: 130%;\
             vertical-align: middle;\
-            '><strong>Top 5 cities 🌆</strong></h1>"                                                                                                      , unsafe_allow_html=True)
+            '><strong>Top 5 cities 🌆</strong></h1>"                                                                                                                                                                                                            , unsafe_allow_html=True)
             fig_top5_Cities = px.bar(st.session_state.map_base_top_five, x='city', y='sales', color='city')
             st.plotly_chart(fig_top5_Cities, use_container_width=True)
         with col2:
             st. markdown("<h1 style='text-align: center; color: blue;font-family: arial; \
-                         font-size: 130%;'><strong>Top 5 stores 🏪 </strong></h1>"                                                                                                                                                                  , unsafe_allow_html=True)
+                         font-size: 130%;'><strong>Top 5 stores 🏪 </strong></h1>"                                                                                                                                                                                                                                                                                                                                    , unsafe_allow_html=True)
             fig_top5_Stores = px.bar(st.session_state.df_stores_top_five, x='store_nbr', y='sales', color = 'city')
             st.plotly_chart(fig_top5_Stores, use_container_width=True)
         with col3:
             st.text("")
             st. markdown("<h1 style='text-align: center; color: blue;font-family: arial; \
-                        font-size: 130%;'><strong>Top 5 categories 🛍</strong></h1>"                                                                                                                                                                      , unsafe_allow_html=True)
+                        font-size: 130%;'><strong>Top 5 categories 🛍</strong></h1>"                                                                                                                                                                                                                                                                                                                                            , unsafe_allow_html=True)
             fig_top5_Family = px.bar(data_frame=st.session_state.data_top5family, x='category', y='sales', color='category')
             st.plotly_chart(fig_top5_Family, use_container_width=True)
 
         #Plot the stores
         st.markdown("<h1 style='text-align: left; color: black;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>III) How many stores do you have ? 🧐   </strong></h1>"                                                                                                                                                        , unsafe_allow_html=True)
+            '><strong>III) How many stores do you have ? 🧐   </strong></h1>"                                                                                                                                                                                                                                                                                                                , unsafe_allow_html=True)
 
         col1, col2 = st.columns((1,1))
         with col1:
@@ -237,7 +241,7 @@ if len(st.session_state) != 0:
         #Plot the family=category
         st.markdown("<h1 style='text-align: left; color: black;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>IV) Which categories do you sell ? 🛒  </strong></h1>"                                                                                                                                                      , unsafe_allow_html=True)
+            '><strong>IV) Which categories do you sell ? 🛒  </strong></h1>"                                                                                                                                                                                                                                                                                                            , unsafe_allow_html=True)
         data_family_allyear_plot = st.session_state.data_family_allyear
         data_family_allyear_plot_From1to10 = data_family_allyear_plot.iloc[0:10,:]
         #data_family_allyear_plot_From12to21 = data_family_allyear_plot.iloc[11:22,:]
@@ -247,14 +251,14 @@ if len(st.session_state) != 0:
         with col1:
             st.markdown("<h1 style='text-align: center; color: blue;font-family: arial; font-size: 130%;\
             vertical-align: middle;\
-            '><strong>Top 10 categories 👍</strong></h1>"                                                                                                                , unsafe_allow_html=True)
+            '><strong>Top 10 categories 👍</strong></h1>"                                                                                                                                                                                                                                , unsafe_allow_html=True)
             fig1 = px.bar(data_family_allyear_plot_From1to10, x='category', y='sales', color='category')
             fig1.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
             st.plotly_chart(fig1, use_container_width=True)
         with col2:
             st.markdown("<h1 style='text-align: center; color: blue;font-family: arial; font-size: 130%;\
             vertical-align: middle;\
-            '><strong>Bottom 10 categories 👎</strong></h1>"                                                                                                                      , unsafe_allow_html=True)
+            '><strong>Bottom 10 categories 👎</strong></h1>"                                                                                                                                                                                                                                            , unsafe_allow_html=True)
             st.text(" ")
             fig3 = px.funnel(data_family_allyear_plot_From23to33, x='category', y='sales', color='category')
             fig3.update_layout(margin={"r":0,"t":0,"l":0,"b":0})
@@ -271,7 +275,7 @@ if len(st.session_state) != 0:
             st.write("-------")
             st.markdown("<h1 style='text-align: center; color: red;font-family: arial; font-size: 200%;\
                         vertical-align: middle ; line-height: 25px\
-                    '><strong>Sales prediction based on <em>STORE</em> 🏪 </strong></h1>"                                                                                                                                                                                , unsafe_allow_html=True)
+                    '><strong>Sales prediction based on <em>STORE</em> 🏪 </strong></h1>"                                                                                                                                                                                                                                                                                                                                                                , unsafe_allow_html=True)
             st.write("-------")
 
         future_store = st.session_state.model_store[store_selection].make_future_dataframe(periods=12, freq='MS')  #period of 12 months
@@ -281,7 +285,7 @@ if len(st.session_state) != 0:
 
         st.markdown("<h1 style='text-align: left; color: green;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>I) Sales prediction for the next year 📉 </strong></h1>"                                                                                                                                                          , unsafe_allow_html=True)
+            '><strong>I) Sales prediction for the next year 📉 </strong></h1>"                                                                                                                                                                                                                                                                                                                    , unsafe_allow_html=True)
         fig = st.session_state.model_store[store_selection].plot(forecast_future_store,xlabel='Year', ylabel='Total Sales')
         fig.set_size_inches(16, 10)
         st.write(fig)
@@ -289,7 +293,7 @@ if len(st.session_state) != 0:
 
         st.markdown("<h1 style='text-align: left; color: green;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>II) Seasonality of the prediction 🎛 </strong></h1>"                                                                                                                                                  , unsafe_allow_html=True)
+            '><strong>II) Seasonality of the prediction 🎛 </strong></h1>"                                                                                                                                                                                                                                                                                                    , unsafe_allow_html=True)
         fig = st.session_state.model_store[store_selection].plot_components(fcst=forecast_future_store)
         fig.set_size_inches(16, 10)
         st.write(fig)
@@ -305,7 +309,7 @@ if len(st.session_state) != 0:
             st.write("-------")
             st.markdown("<h1 style='text-align: center; color: red;font-family: arial; font-size: 200%;\
                         vertical-align: middle ; line-height: 25px\
-                    '><strong>Sales prediction based on <em>CATEGORY</em> 🛒 </strong></h1>"                                                                                                                                                                                      , unsafe_allow_html=True)
+                    '><strong>Sales prediction based on <em>CATEGORY</em> 🛒 </strong></h1>"                                                                                                                                                                                                                                                                                                                                                                            , unsafe_allow_html=True)
             st.write("-------")
 
         future_family = st.session_state.model_family[family_prediction_selection].make_future_dataframe(periods=12, freq='MS')  #period of 12 months
@@ -314,14 +318,14 @@ if len(st.session_state) != 0:
 
         st.markdown("<h1 style='text-align: left; color: green;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>I) Sales prediction for the next year 📉 </strong></h1>"                                                                                                                                                          , unsafe_allow_html=True)
+            '><strong>I) Sales prediction for the next year 📉 </strong></h1>"                                                                                                                                                                                                                                                                                                                    , unsafe_allow_html=True)
         fig = st.session_state.model_family[family_prediction_selection].plot(forecast_future_family,xlabel='Year', ylabel='Total Sales')
         fig.set_size_inches(16, 10)
         st.write(fig)
 
         st.markdown("<h1 style='text-align: left; color: green;font-family: arial; font-size: 150%;\
             vertical-align: middle;\
-            '><strong>II) Seasonality of the prediction 🎛 </strong></h1>"                                                                                                                                                  , unsafe_allow_html=True)
+            '><strong>II) Seasonality of the prediction 🎛 </strong></h1>"                                                                                                                                                                                                                                                                                                    , unsafe_allow_html=True)
         fig = st.session_state.model_family[family_prediction_selection].plot_components(fcst=forecast_future_family)
         fig.set_size_inches(16, 10)
         st.write(fig)
