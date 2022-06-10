@@ -2,7 +2,7 @@
 pip>=9
 setuptools>=26
 twine
-#wheel>=0.29
+wheel>=0.29
 
 # data science
 numpy
@@ -26,5 +26,5 @@ streamlit
 matplotlib
 plotly
 seaborn
-pystan==2.19.1.1
-fbprophet
+#pystan==2.19.1.1
+#fbprophet
